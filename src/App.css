@@ -1,7 +1,7 @@
 .idea-board {
-  width: min(960px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 56px 0;
+  padding: 44px 0 56px;
 }
 
 .board-header {
@@ -10,6 +10,27 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 28px;
+}
+
+.board-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.composer-panel {
+  position: sticky;
+  top: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.board-panel {
+  min-width: 0;
 }
 
 .eyebrow {
@@ -30,7 +51,6 @@
 }
 
 .idea-form {
-  margin-bottom: 28px;
   text-align: left;
 }
 
@@ -44,9 +64,7 @@
 
 .composer {
   display: grid;
-  grid-template-columns: 1fr 128px;
   gap: 12px;
-  align-items: stretch;
 }
 
 textarea,
@@ -87,8 +105,7 @@ input:focus {
 }
 
 .composer button {
-  grid-column: 2;
-  grid-row: 1 / 3;
+  width: 100%;
 }
 
 .form-error {
@@ -139,13 +156,13 @@ button:focus-visible {
 
 .idea-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
 
 .idea-card,
 .empty-state {
-  min-height: 170px;
+  min-height: 196px;
   box-sizing: border-box;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -159,6 +176,7 @@ button:focus-visible {
   justify-content: space-between;
   gap: 20px;
   padding: 18px;
+  box-shadow: var(--shadow-soft);
 }
 
 .card-body {
@@ -239,12 +257,21 @@ button:focus-visible {
 }
 
 .empty-state {
-  grid-column: 1 / -1;
   display: grid;
   place-items: center;
   padding: 32px;
   color: var(--muted);
   font-weight: 700;
+}
+
+@media (max-width: 860px) {
+  .board-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .composer-panel {
+    position: static;
+  }
 }
 
 @media (max-width: 640px) {
@@ -261,12 +288,11 @@ button:focus-visible {
     margin-top: 8px;
   }
 
-  .composer {
-    grid-template-columns: 1fr;
+  .composer-panel {
+    padding: 16px;
   }
 
-  .composer button {
-    grid-column: auto;
-    grid-row: auto;
+  .idea-list {
+    grid-template-columns: 1fr;
   }
 }

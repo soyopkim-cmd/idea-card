@@ -192,131 +192,137 @@ function App() {
         <p className="summary">{ideas.length}개의 아이디어</p>
       </section>
 
-      <form className="idea-form" onSubmit={handleCreateIdea}>
-        <label htmlFor="idea-input">새 아이디어</label>
-        <div className="composer">
-          <textarea
-            id="idea-input"
-            value={newIdea}
-            onChange={(event) => setNewIdea(event.target.value)}
-            placeholder="떠오른 생각을 적어보세요"
-            rows="4"
-          />
-          <input
-            id="youtube-input"
-            type="text"
-            value={newVideoUrl}
-            onChange={(event) => {
-              setNewVideoUrl(event.target.value)
-              setFormError('')
-            }}
-            placeholder="유튜브 링크를 붙여넣으세요"
-          />
-          <button type="submit">저장</button>
-        </div>
-        {formError ? <p className="form-error">{formError}</p> : null}
-      </form>
+      <div className="board-layout">
+        <aside className="composer-panel">
+          <form className="idea-form" onSubmit={handleCreateIdea}>
+            <label htmlFor="idea-input">새 아이디어</label>
+            <div className="composer">
+              <textarea
+                id="idea-input"
+                value={newIdea}
+                onChange={(event) => setNewIdea(event.target.value)}
+                placeholder="떠오른 생각을 적어보세요"
+                rows="7"
+              />
+              <input
+                id="youtube-input"
+                type="text"
+                value={newVideoUrl}
+                onChange={(event) => {
+                  setNewVideoUrl(event.target.value)
+                  setFormError('')
+                }}
+                placeholder="유튜브 링크를 붙여넣으세요"
+              />
+              <button type="submit">저장</button>
+            </div>
+            {formError ? <p className="form-error">{formError}</p> : null}
+          </form>
+        </aside>
 
-      <section className="idea-list" aria-label="저장된 아이디어 목록">
-        {ideas.length === 0 ? (
-          <div className="empty-state">아직 저장된 아이디어가 없습니다.</div>
-        ) : (
-          ideas.map((idea) => {
-            const isEditing = editingId === idea.id
+        <section className="board-panel" aria-label="저장된 아이디어 목록">
+          {ideas.length === 0 ? (
+            <div className="empty-state">아직 저장된 아이디어가 없습니다.</div>
+          ) : (
+            <div className="idea-list">
+              {ideas.map((idea) => {
+                const isEditing = editingId === idea.id
 
-            return (
-              <article className="idea-card" key={idea.id}>
-                {isEditing ? (
-                  <>
-                    <textarea
-                      className="edit-input"
-                      value={editingContent}
-                      onChange={(event) =>
-                        setEditingContent(event.target.value)
-                      }
-                      rows="5"
-                      aria-label="아이디어 내용 수정"
-                    />
-                    <input
-                      className="edit-video-input"
-                      type="text"
-                      value={editingVideoUrl}
-                      onChange={(event) => {
-                        setEditingVideoUrl(event.target.value)
-                        setEditingError('')
-                      }}
-                      placeholder="유튜브 링크"
-                      aria-label="유튜브 링크 수정"
-                    />
-                    {editingError ? (
-                      <p className="form-error">{editingError}</p>
-                    ) : null}
-                    <div className="card-actions">
-                      <button
-                        type="button"
-                        className="secondary"
-                        onClick={handleCancelEdit}
-                      >
-                        취소
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSaveEdit(idea.id)}
-                      >
-                        수정 저장
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="card-body">
-                      {idea.videoId ? (
-                        <>
-                          <div className="video-frame">
-                            <iframe
-                              src={getYouTubeEmbedUrl(idea.videoId)}
-                              title="YouTube video player"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                              allowFullScreen
-                              loading="lazy"
-                              referrerPolicy="strict-origin-when-cross-origin"
-                            />
-                          </div>
-                          <a
-                            className="video-link"
-                            href={getYouTubeWatchUrl(idea.videoId)}
-                            target="_blank"
-                            rel="noreferrer"
+                return (
+                  <article className="idea-card" key={idea.id}>
+                    {isEditing ? (
+                      <>
+                        <textarea
+                          className="edit-input"
+                          value={editingContent}
+                          onChange={(event) =>
+                            setEditingContent(event.target.value)
+                          }
+                          rows="5"
+                          aria-label="아이디어 내용 수정"
+                        />
+                        <input
+                          className="edit-video-input"
+                          type="text"
+                          value={editingVideoUrl}
+                          onChange={(event) => {
+                            setEditingVideoUrl(event.target.value)
+                            setEditingError('')
+                          }}
+                          placeholder="유튜브 링크"
+                          aria-label="유튜브 링크 수정"
+                        />
+                        {editingError ? (
+                          <p className="form-error">{editingError}</p>
+                        ) : null}
+                        <div className="card-actions">
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={handleCancelEdit}
                           >
-                            유튜브에서 열기
-                          </a>
-                        </>
-                      ) : null}
-                      {idea.content ? <p>{idea.content}</p> : null}
-                    </div>
-                    <div className="card-actions">
-                      <button
-                        type="button"
-                        className="secondary"
-                        onClick={() => handleStartEdit(idea)}
-                      >
-                        수정
-                      </button>
-                      <button
-                        type="button"
-                        className="danger"
-                        onClick={() => handleDeleteIdea(idea.id)}
-                      >
-                        삭제
-                      </button>
-                    </div>
-                  </>
-                )}
-              </article>
-            )
-          })
-        )}
-      </section>
+                            취소
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSaveEdit(idea.id)}
+                          >
+                            수정 저장
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="card-body">
+                          {idea.videoId ? (
+                            <>
+                              <div className="video-frame">
+                                <iframe
+                                  src={getYouTubeEmbedUrl(idea.videoId)}
+                                  title="YouTube video player"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                  allowFullScreen
+                                  loading="lazy"
+                                  referrerPolicy="strict-origin-when-cross-origin"
+                                />
+                              </div>
+                              <a
+                                className="video-link"
+                                href={getYouTubeWatchUrl(idea.videoId)}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                유튜브에서 열기
+                              </a>
+                            </>
+                          ) : null}
+                          {idea.content ? <p>{idea.content}</p> : null}
+                        </div>
+                        <div className="card-actions">
+                          <button
+                            type="button"
+                            className="secondary"
+                            onClick={() => handleStartEdit(idea)}
+                          >
+                            수정
+                          </button>
+                          <button
+                            type="button"
+                            className="danger"
+                            onClick={() => handleDeleteIdea(idea.id)}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </article>
+                )
+              })}
+            </div>
+          )}
+        </section>
+      </div>
     </main>
   )
 }
