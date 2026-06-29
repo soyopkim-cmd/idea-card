@@ -1,0 +1,272 @@
+.idea-board {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 56px 0;
+}
+
+.board-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.summary {
+  flex: 0 0 auto;
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.idea-form {
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.idea-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text-h);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: 1fr 128px;
+  gap: 12px;
+  align-items: stretch;
+}
+
+textarea,
+input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: var(--text-h);
+  background: var(--surface);
+  font: inherit;
+  line-height: 1.5;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input {
+  min-height: 48px;
+}
+
+textarea::placeholder,
+input::placeholder {
+  color: var(--muted);
+}
+
+textarea:focus,
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-bg);
+}
+
+.composer button {
+  grid-column: 2;
+  grid-row: 1 / 3;
+}
+
+.form-error {
+  margin: 10px 0 0;
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+button {
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0 16px;
+  color: #ffffff;
+  background: var(--accent);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+button:focus-visible {
+  outline: 3px solid var(--accent-border);
+  outline-offset: 2px;
+}
+
+.secondary {
+  color: var(--text-h);
+  background: var(--control-bg);
+  border-color: var(--border);
+}
+
+.danger {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+.idea-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.idea-card,
+.empty-state {
+  min-height: 170px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.idea-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px;
+}
+
+.card-body {
+  display: grid;
+  gap: 14px;
+}
+
+.idea-card p {
+  margin: 0;
+  color: var(--text-h);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.video-frame {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  background: #0f172a;
+}
+
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--text-h);
+  background: var(--control-bg);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.video-link:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.video-link:focus-visible {
+  outline: 3px solid var(--accent-border);
+  outline-offset: 2px;
+}
+
+.edit-input {
+  flex: 1;
+  min-height: 112px;
+}
+
+.edit-video-input {
+  flex: 0 0 auto;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.card-actions button {
+  min-height: 38px;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .idea-board {
+    width: min(100% - 24px, 960px);
+    padding: 32px 0;
+  }
+
+  .board-header {
+    display: block;
+  }
+
+  .summary {
+    margin-top: 8px;
+  }
+
+  .composer {
+    grid-template-columns: 1fr;
+  }
+
+  .composer button {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
