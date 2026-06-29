@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import {
+  createIdea as createRemoteIdea,
+  deleteIdea as deleteRemoteIdea,
+  fetchIdeas,
+  isSupabaseConfigured,
+  updateIdea as updateRemoteIdea,
+} from './ideasApi'
 
 const IDEAS_STORAGE_KEY = 'idea-card:ideas'
 
@@ -92,16 +99,36 @@ function App() {
   const [newIdea, setNewIdea] = useState('')
   const [newVideoUrl, setNewVideoUrl] = useState('')
   const [formError, setFormError] = useState('')
+  const [isLoading, setIsLoading] = useState(isSupabaseConfigured)
+  const [syncError, setSyncError] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [editingContent, setEditingContent] = useState('')
   const [editingVideoUrl, setEditingVideoUrl] = useState('')
   const [editingError, setEditingError] = useState('')
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return
+
+    const loadIdeas = async () => {
+      try {
+        const remoteIdeas = await fetchIdeas()
+        setIdeas(remoteIdeas)
+        setSyncError('')
+      } catch (error) {
+        setSyncError(`Supabase 데이터를 불러오지 못했습니다: ${error.message}`)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadIdeas()
+  }, [])
+
+  useEffect(() => {
     localStorage.setItem(IDEAS_STORAGE_KEY, JSON.stringify(ideas))
   }, [ideas])
 
-  const handleCreateIdea = (event) => {
+  const handleCreateIdea = async (event) => {
     event.preventDefault()
     const content = newIdea.trim()
     const videoUrl = normalizeUrl(newVideoUrl)
@@ -114,30 +141,41 @@ function App() {
       return
     }
 
-    setIdeas((currentIdeas) => [
-      {
-        id: Date.now(),
-        content,
-        videoUrl,
-        videoId,
-      },
-      ...currentIdeas,
-    ])
-    setNewIdea('')
-    setNewVideoUrl('')
-    setFormError('')
+    const idea = {
+      id: Date.now(),
+      content,
+      videoUrl,
+      videoId,
+    }
+
+    try {
+      const savedIdea = await createRemoteIdea(idea)
+      setIdeas((currentIdeas) => [savedIdea, ...currentIdeas])
+      setNewIdea('')
+      setNewVideoUrl('')
+      setFormError('')
+      setSyncError('')
+    } catch (error) {
+      setFormError(`아이디어를 저장하지 못했습니다: ${error.message}`)
+    }
   }
 
-  const handleDeleteIdea = (ideaId) => {
-    setIdeas((currentIdeas) =>
-      currentIdeas.filter((idea) => idea.id !== ideaId),
-    )
+  const handleDeleteIdea = async (ideaId) => {
+    try {
+      await deleteRemoteIdea(ideaId)
+      setIdeas((currentIdeas) =>
+        currentIdeas.filter((idea) => idea.id !== ideaId),
+      )
+      setSyncError('')
 
-    if (editingId === ideaId) {
-      setEditingId(null)
-      setEditingContent('')
-      setEditingVideoUrl('')
-      setEditingError('')
+      if (editingId === ideaId) {
+        setEditingId(null)
+        setEditingContent('')
+        setEditingVideoUrl('')
+        setEditingError('')
+      }
+    } catch (error) {
+      setSyncError(`아이디어를 삭제하지 못했습니다: ${error.message}`)
     }
   }
 
@@ -155,7 +193,7 @@ function App() {
     setEditingError('')
   }
 
-  const handleSaveEdit = (ideaId) => {
+  const handleSaveEdit = async (ideaId) => {
     const content = editingContent.trim()
     const videoUrl = normalizeUrl(editingVideoUrl)
     const videoId = getYouTubeVideoId(videoUrl)
@@ -167,19 +205,25 @@ function App() {
       return
     }
 
-    setIdeas((currentIdeas) =>
-      currentIdeas.map((idea) =>
-        idea.id === ideaId
-          ? {
-              ...idea,
-              content,
-              videoUrl,
-              videoId,
-            }
-          : idea,
-      ),
-    )
-    handleCancelEdit()
+    const previousIdea = ideas.find((idea) => idea.id === ideaId)
+    const nextIdea = {
+      ...previousIdea,
+      id: ideaId,
+      content,
+      videoUrl,
+      videoId,
+    }
+
+    try {
+      const savedIdea = await updateRemoteIdea(nextIdea)
+      setIdeas((currentIdeas) =>
+        currentIdeas.map((idea) => (idea.id === ideaId ? savedIdea : idea)),
+      )
+      setSyncError('')
+      handleCancelEdit()
+    } catch (error) {
+      setEditingError(`아이디어를 수정하지 못했습니다: ${error.message}`)
+    }
   }
 
   return (
@@ -191,6 +235,8 @@ function App() {
         </div>
         <p className="summary">{ideas.length}개의 아이디어</p>
       </section>
+
+      {syncError ? <p className="sync-error">{syncError}</p> : null}
 
       <div className="board-layout">
         <aside className="composer-panel">
@@ -221,7 +267,9 @@ function App() {
         </aside>
 
         <section className="board-panel" aria-label="저장된 아이디어 목록">
-          {ideas.length === 0 ? (
+          {isLoading ? (
+            <div className="empty-state">아이디어를 불러오는 중입니다.</div>
+          ) : ideas.length === 0 ? (
             <div className="empty-state">아직 저장된 아이디어가 없습니다.</div>
           ) : (
             <div className="idea-list">

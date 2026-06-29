@@ -50,6 +50,17 @@
   font-weight: 700;
 }
 
+.sync-error {
+  margin: -10px 0 18px;
+  border: 1px solid var(--danger-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--danger);
+  background: var(--danger-bg);
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .idea-form {
   text-align: left;
 }
